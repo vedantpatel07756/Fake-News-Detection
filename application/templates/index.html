@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>News Authenticity Checker</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --dark-color: #2c3e50;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .navbar {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navbar-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: white;
+            text-decoration: none;
+        }
+
+        .logo span {
+            color: var(--secondary-color);
+        }
+
+        .news-ticker {
+            background-color: var(--dark-color);
+            color: white;
+            padding: 0.5rem 0;
+            overflow: hidden;
+        }
+
+        .ticker-content {
+            display: inline-block;
+            white-space: nowrap;
+            padding-left: 100%;
+            animation: ticker 30s linear infinite;
+        }
+
+        .ticker-content a {
+            color: var(--light-color);
+            text-decoration: none;
+            margin-right: 2rem;
+            transition: color 0.3s;
+        }
+
+        .ticker-content a:hover {
+            color: var(--secondary-color);
+        }
+
+        @keyframes ticker {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-100%); }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            font-size: 2.2rem;
+        }
+
+        .description {
+            color: #666;
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+        }
+
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+
+        textarea {
+            width: 100%;
+            padding: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+            min-height: 150px;
+            resize: vertical;
+            transition: border 0.3s;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        }
+
+        button {
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            font-size: 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        .result-container {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            border-radius: 4px;
+            display: none;
+        }
+
+        .result-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .real {
+            background-color: rgba(39, 174, 96, 0.1);
+            border-left: 4px solid var(--success-color);
+        }
+
+        .fake {
+            background-color: rgba(231, 76, 60, 0.1);
+            border-left: 4px solid var(--accent-color);
+        }
+
+        .error {
+            background-color: rgba(231, 76, 60, 0.1);
+            color: var(--accent-color);
+            padding: 1rem;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+            display: none;
+        }
+
+        .news-sources {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .news-source {
+            background-color: white;
+            padding: 1rem;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            flex: 1 1 200px;
+            text-align: center;
+            transition: transform 0.3s;
+        }
+
+        .news-source:hover {
+            transform: translateY(-3px);
+        }
+
+        .news-source a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .news-source img {
+            height: 40px;
+            margin-bottom: 0.5rem;
+        }
+
+        footer {
+            background-color: var(--primary-color);
+            color: white;
+            text-align: center;
+            padding: 1.5rem;
+            margin-top: 3rem;
+        }
+
+        @media (max-width: 768px) {
+            .navbar-container {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .logo {
+                margin-bottom: 1rem;
+            }
+            
+            .container {
+                padding: 0 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="/" class="logo">News<span>Checker</span></a>
+            <div class="nav-links">
+                <a href="#" style="color: white; text-decoration: none; margin-left: 1.5rem;">Home</a>
+                <a href="#" style="color: white; text-decoration: none; margin-left: 1.5rem;">About</a>
+                <a href="#" style="color: white; text-decoration: none; margin-left: 1.5rem;">API</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="news-ticker">
+        <div class="ticker-content">
+            <a href="https://www.bbc.com" target="_blank">BBC: Climate summit reaches new agreement</a>
+            <a href="https://www.cnn.com" target="_blank">CNN: Stock markets hit record high</a>
+            <a href="https://www.nytimes.com" target="_blank">NYT: New legislation passes senate</a>
+            <a href="https://www.reuters.com" target="_blank">Reuters: Tech giant unveils new AI assistant</a>
+            <a href="https://www.apnews.com" target="_blank">AP: Scientists discover new species</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="card">
+            <h1>Check News Authenticity</h1>
+            <p class="description">Verify whether a news article or statement is likely to be real or fake using our AI-powered detection system.</p>
+            
+            <div class="error" id="error-message"></div>
+            
+            <!-- In your index.html, replace the form with this: -->
+<form action="/predict" method="POST">
+    <div class="input-group">
+        <label for="news_text">Enter News Text</label>
+        <textarea name="news_text" id="news_text" required placeholder="Paste the news content you want to verify here..."></textarea>
+    </div>
+    <button type="submit">Analyze News</button>
+</form>
+
+<!-- Add this to display flash messages -->
+{% with messages = get_flashed_messages() %}
+    {% if messages %}
+        <div class="error">
+            {{ messages[0] }}
+        </div>
+    {% endif %}
+{% endwith %}
+            
+            <div class="result-container" id="result-container">
+                <div class="result-title">Analysis Result:</div>
+                <div id="result-text"></div>
+            </div>
+            
+            <div class="news-sources">
+                <div class="news-source">
+                    <a href="https://www.bbc.com" target="_blank">BBC News</a>
+                </div>
+                <div class="news-source">
+                    <a href="https://www.reuters.com" target="_blank">Reuters</a>
+                </div>
+                <div class="news-source">
+                    <a href="https://www.apnews.com" target="_blank">Associated Press</a>
+                </div>
+                <div class="news-source">
+                    <a href="https://www.nytimes.com" target="_blank">New York Times</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2023 NewsChecker. All rights reserved.</p>
+    </footer>
+
+   
+       
+</body>
+</html>
